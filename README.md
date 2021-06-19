@@ -33,18 +33,18 @@
 >Добавлены методы классов
 
 * Для студентов
-'''python
+```python
 def __lt__(self, other_student):
     if isinstance(other_student, Student):
         return average_grade(self.grades) < average_grade(other_student.grades)
     else:
         return None
-'''
+```
 * Для лекторов
-'''python
+```python
 def __lt__(self, other_lecturer):
     if isinstance(other_lecturer, Lecturer):
         return average_grade(self.grades) < average_grade(other_lecturer.grades)
     else:
         return None
-'''
+```
