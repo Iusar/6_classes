@@ -1,5 +1,5 @@
 # Класс студентов
-class student:
+class Student:
     def __init__(self, name, surname, gender):
         self.name = name
         self.surname = surname
@@ -16,7 +16,7 @@ class student:
         return output
 
     def rate_lecturer(self, specific_lecturer, course, grade):
-        if isinstance(specific_lecturer, lecturer) \
+        if isinstance(specific_lecturer, Lecturer) \
                 and course in specific_lecturer.courses_attached \
                 and course in self.courses_in_progress \
                 and 0 < grade <= 10:
@@ -26,16 +26,22 @@ class student:
         else:
             return 'Ошибка'
 
+    def __lt__(self, other_student):
+        if isinstance(other_student, Student):
+            return average_grade(self.grades) < average_grade(other_student.grades)
+        else:
+            return None
+
 
 # Класс преподавателей
-class mentor:
+class Mentor:
     def __init__(self, name, surname):
         self.name = name
         self.surname = surname
 
 
 # Класс лекторов
-class lecturer(mentor):
+class Lecturer(Mentor):
     def __init__(self, name, surname):
         super().__init__(name, surname)
         self.grades = []
@@ -45,9 +51,15 @@ class lecturer(mentor):
         output = f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции: {average_grade(self.grades)}'
         return output
 
+    def __lt__(self, other_lecturer):
+        if isinstance(other_lecturer, Lecturer):
+            return average_grade(self.grades) < average_grade(other_lecturer.grades)
+        else:
+            return None
+
 
 # Класс экспертов
-class reviewer(mentor):
+class Reviewer(Mentor):
     def __init__(self, name, surname):
         super().__init__(name, surname)
         self.courses_attached = []
@@ -58,7 +70,7 @@ class reviewer(mentor):
 
     # Метод класса оценки студентов
     def rate_hw(self, specific_student, course, grade):
-        if isinstance(specific_student, student) \
+        if isinstance(specific_student, Student) \
                 and course in self.courses_attached \
                 and course in specific_student.courses_in_progress:
 
@@ -92,7 +104,8 @@ def average_course_grade(all_students, current_course):
         if current_course in current_student.grades.keys():
             for every_grade in current_student.grades.get(current_course):
                 all_course_grades.append(every_grade)
-        else: print(f'Курс {current_course} отсутствует у студента {current_student.name} {current_student.surname}')
+        else:
+            print(f'Курс {current_course} отсутствует у студента {current_student.name} {current_student.surname}')
     return average_grade(all_course_grades)
 
 
@@ -105,35 +118,8 @@ def average_lecturers_grade(all_lecturers):
     return average_grade(all_lecturers_grades)
 
 
-# Функция сравнения оценок:
-def average_grade_diff(person_1, person_2):
-    if isinstance(person_1, student) and isinstance(person_2, student):
-        if average_grade(person_1.grades) > average_grade(person_2.grades):
-            print(
-                f'Средняя оценка студента {person_1.name} {person_1.surname} больше чем у студента {person_2.name} {person_2.surname}')
-        elif average_grade(person_1.grades) < average_grade(person_2.grades):
-            print(
-                f'Средняя оценка студента {person_1.name} {person_1.surname} меньше чем у студента {person_2.name} {person_2.surname}')
-        else:
-            print(
-                f'Средние оценки студентов {person_1.name} {person_1.surname} и {person_2.name} {person_2.surname} равны')
-    elif isinstance(person_1, lecturer) and isinstance(person_2, lecturer):
-        if average_grade(person_1.grades) > average_grade(person_2.grades):
-            print(
-                f'Средняя оценка лектора {person_1.name} {person_1.surname} больше чем у лектора {person_2.name} {person_2.surname}')
-        elif average_grade(person_1.grades) < average_grade(person_2.grades):
-            print(
-                f'Средняя оценка лектора {person_1.name} {person_1.surname} меньше чем у лектора {person_2.nam} {person_2.surname}')
-        else:
-            print(
-                f'Средние оценки лекторов {person_1.name} {person_1.surname} и {person_2.name} {person_2.surname} равны')
-    else:
-        print('Ошибка! Выберите или двух студентов или двух преподавателей')
-    pass
-
-
 # Создание экземпляра класса студент1:
-student_no_1 = student('Roy', 'Eman', '25')
+student_no_1 = Student('Roy', 'Eman', '25')
 student_no_1.courses_in_progress += ['Python']
 student_no_1.courses_in_progress += ['English for IT']
 student_no_1.finished_courses += ['Git']
@@ -142,7 +128,7 @@ student_no_1.grades['Git'] = [7, 2, 6]
 student_no_1.grades['Python'] = [10, 10, 8, 10, 10, 10]
 student_no_1.grades['English for IT'] = [10, 10]
 # Создание экземпляра класса студент2:
-student_no_2 = student('Mike', 'Red', '45')
+student_no_2 = Student('Mike', 'Red', '45')
 student_no_2.courses_in_progress += ['Python']
 student_no_2.finished_courses += ['Git']
 student_no_2.grades['Git'] = [9, 5, 2]
@@ -151,13 +137,13 @@ student_no_2.grades['Python'] = [8, 10]
 student_list = [student_no_1, student_no_2]
 
 # Создание экземпляра класса лектор1:
-lecturer_1 = lecturer('Bill', 'Boops')
+lecturer_1 = Lecturer('Bill', 'Boops')
 lecturer_1.courses_attached += ['Python']
 lecturer_1.courses_attached += ['English for IT']
 lecturer_1.courses_attached += ['Git']
 
 # Создание экземпляра класса лектор2:
-lecturer_2 = lecturer('Ray', 'Bitts')
+lecturer_2 = Lecturer('Ray', 'Bitts')
 lecturer_2.courses_attached += ['Python']
 lecturer_2.courses_attached += ['English for IT']
 lecturer_2.courses_attached += ['Git']
@@ -166,11 +152,11 @@ lecturer_2.courses_attached += ['Git']
 lecturer_list = [lecturer_1, lecturer_2]
 
 # Создание экземпляра класса Эксперт:
-cool_reviewer = reviewer('Anton', 'Green')
+cool_reviewer = Reviewer('Anton', 'Green')
 cool_reviewer.courses_attached += ['Python']
 
 # Создание экземпляра класса Эксперт2:
-cool_reviewer_2 = reviewer('Eddy', 'Grey')
+cool_reviewer_2 = Reviewer('Eddy', 'Grey')
 cool_reviewer_2.courses_attached += ['Git']
 
 # Проверяем
@@ -220,15 +206,19 @@ print()
 print(student_no_2)
 print()
 
-print('*****Результат проверки работы функции сравнения*****')
-average_grade_diff(student_no_1, student_no_2)
-print()
-average_grade_diff(lecturer_2, lecturer_1)
-print()
-average_grade_diff(student_no_1, lecturer_1)
-
 print('*****Результат проверки работы функции рассчета среднего балла студентов по определенному курсу*****')
 print(average_course_grade(student_list, 'Git'))
 
 print('*****Результат проверки работы функции рассчета среднего балла лекторов по всем курсам (почему-то..)*****')
 print(average_lecturers_grade(lecturer_list))
+
+print('*****Проверка функций сравнения*****')
+print(student_no_1 < student_no_2)
+print(student_no_2 < student_no_1)
+print(student_no_1 > student_no_2)
+print(student_no_2 > lecturer_1)
+
+print(lecturer_1 < lecturer_2)
+print(lecturer_1 < lecturer_2)
+print(lecturer_1 > lecturer_2)
+print(lecturer_1 > student_no_1)

@@ -27,3 +27,24 @@
 
 > Не рабочих методов не нашел. С логикой тестирования оказалось не просто придумать.
 
+### Исправление замечаний
+
+>Названия классов исправлены
+>Добавлены методы классов
+
+* Для студентов
+'''python
+    def __lt__(self, other_student):
+        if isinstance(other_student, Student):
+            return average_grade(self.grades) < average_grade(other_student.grades)
+        else:
+            return None
+'''
+* Для лекторов
+'''python
+    def __lt__(self, other_lecturer):
+        if isinstance(other_lecturer, Lecturer):
+            return average_grade(self.grades) < average_grade(other_lecturer.grades)
+        else:
+            return None
+'''
